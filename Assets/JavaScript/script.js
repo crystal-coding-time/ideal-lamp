@@ -1,7 +1,7 @@
 // Below are our global varibles
 const APIKEY = 'AIzaSyCGt6hDWBgYbjPW9h_jdA7i9c6iHsjiLYA';
 const youtubeAPI = 'https://www.googleapis.com/youtube/v3/search?maxResults=5&key=';
-let youtubeDisplay = document.getElementById('youtube-video');
+const youtubeDisplay = document.getElementById('youtube-video');
 const searchButton = document.querySelector('#search-btn');
 const clearButton = document.querySelector('#clear-btn');
 
@@ -59,12 +59,9 @@ function displayVideos(data) {
 
     // Bootstrap responsive iframe with the video ID to the YouTube video container element
     youtubeDisplay.innerHTML += `
-    <div class="embed-responsive embed-responsive-16by9 ">
-      <div class="mx-auto">
-        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/${videoIDLoop}" allowfullscreen></iframe>
-      </div>
-    </div>
-  `;
+    <div class="embed-responsive embed-responsive-16by9 mx-auto w-100">
+        <iframe class="embed-responsive-item mx-auto w-100" src="https://www.youtube.com/embed/${videoIDLoop}" allowfullscreen></iframe>
+    </div>`;
   }
 };
 
