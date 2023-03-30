@@ -16,7 +16,7 @@ searchButton.addEventListener('click', function(event) {
     displayPastSearches(); // update the past searches display
   });
   
-  // Attach a click event listener to the clear button
+// Attach a click event listener to the clear button to clear the local storage
   clearButton.addEventListener('click', function (event) {
     // retrieve past searches from local storage
     const storedSearches = JSON.parse(localStorage.getItem('pastSearches'));
@@ -26,31 +26,48 @@ searchButton.addEventListener('click', function(event) {
       const oldButtons = document.querySelectorAll('.history-btns'); // select all history buttons
       oldButtons.forEach(button => button.remove()); // remove each history button
     }
-  });
+  });  
+
+
+// Function that takes in a searchTerm parameter and makes a fetch request to the YouTube API
+var getYouTube = function (searchTerm) {
+    // Construct the YouTube search URL with the search term and API key
+    let searchYouTube = youtubeAPI + APIKEY + '&part=snippet&videoCategoryId=27&type=video&q=' + searchTerm;
+  
+    // Make a fetch request to the YouTube API with the constructed URL
+    fetch(searchYouTube)
+      .then(function (response) { // When the response is returned
+        return response.json(); // Parse the response as JSON
+      }).then(function (data) { // When the JSON data is returned
+        displayVideos(data); // Call the displayVideos function with the data
+      }).catch(function (error) { // If there is an error
+        console.log(error); // Log the error to the console
+      });
+  };
   
 
+// Define a function called displayVideos that takes in a data parameter
+function displayVideos(data) {
+  // Clear the current contents of the YouTube video container element
+  youtubeDisplay.innerHTML = '';
 
-var getYouTube = function (searchTerm) {
-    let searchYouTube = youtubeAPI + APIKEY +'&part=snippet&videoCategoryId=27&type=video&q=' + searchTerm;
-    fetch(searchYouTube)
-        .then(function (response) {
-            return response.json();
-        }).then(function (data) {
-            displayVideos(data);
-        }).catch(function (error) {
-            console.log(error);
-        });
+  // Loop through each video item in the data
+  for (let i = 0; i < data.items.length; i++) {
+    // Get the video ID for the current item
+    const videoIDLoop = data.items[i].id.videoId;
+    console.log(videoIDLoop);
+
+    // Bootstrap responsive iframe with the video ID to the YouTube video container element
+    youtubeDisplay.innerHTML += `
+    <div class="embed-responsive embed-responsive-16by9 ">
+      <div class="mx-auto">
+        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/${videoIDLoop}" allowfullscreen></iframe>
+      </div>
+    </div>
+  `;
+  }
 };
 
-
-function displayVideos(data) {
-    youtubeDisplay.innerHTML = '';
-    for (let i = 0; i < data.items.length; i++) {
-        const videoIDLoop = data.items[i].id.videoId;
-        console.log(videoIDLoop);
-        youtubeDisplay.innerHTML += `<iframe width="700" height="345" class="" src="https://www.youtube.com/embed/${videoIDLoop}"></iframe>`;
-    }
-}
 
 var getWikiInfo = function (searchTerm) {
     var wikiURL = 'https://en.wikipedia.org/w/rest.php/v1/search/page?q=' + searchTerm + '&limit=1';
@@ -135,8 +152,8 @@ var displayPastSearches = function () {
         //we set the current searchTerm equal to whatever city name was clicked on in our search history
         searchTerm = this.innerHTML;
         //then we can do the process of running another search for that term
-        getWikiInfo();
-        getYouTube();
+        getWikiInfo(searchTerm);
+        getYouTube(searchTerm);
     });
 }
 //calling this function again outside of the other functions makes sure the past searches 
