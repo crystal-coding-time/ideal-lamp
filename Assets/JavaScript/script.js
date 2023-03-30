@@ -2,43 +2,33 @@
 const APIKEY = 'AIzaSyCGt6hDWBgYbjPW9h_jdA7i9c6iHsjiLYA';
 const youtubeAPI = 'https://www.googleapis.com/youtube/v3/search?maxResults=5&key=';
 let youtubeDisplay = document.getElementById('youtube-video');
-
-
-// $('#search-btn').on("click", function (event) { 
-//     event.preventDefault();
-//     searchTerm = $("#searchInput").val();
-//     console.log(searchTerm);
-//     getWikiInfo();
-//     getYouTube();
-//     storePastSearches(searchTerm);
-//     displayPastSearches();
-// });
-
 const searchButton = document.querySelector('#search-btn');
+const clearButton = document.querySelector('#clear-btn');
 
-// const searchInput = document.querySelector('#searchInput');
+
+// Attach a click event listener to the search button
 searchButton.addEventListener('click', function(event) {
-event.preventDefault();
-const searchTerm = document.querySelector('#searchInput').value;
-// console.log(searchTerm);
-getWikiInfo(searchTerm);
-getYouTube(searchTerm);
-storePastSearches(searchTerm);
-displayPastSearches();
-});
+    event.preventDefault(); // prevent the default form submission behavior
+    const searchTerm = document.querySelector('#searchInput').value; // get the search term from the input field
+    getWikiInfo(searchTerm); // call the getWikiInfo function with the search term
+    getYouTube(searchTerm); // call the getYouTube function with the search term
+    storePastSearches(searchTerm); // store the search term in local storage
+    displayPastSearches(); // update the past searches display
+  });
+  
+  // Attach a click event listener to the clear button
+  clearButton.addEventListener('click', function (event) {
+    // retrieve past searches from local storage
+    const storedSearches = JSON.parse(localStorage.getItem('pastSearches'));
+    
+    if (storedSearches) { // if past searches exist
+      localStorage.clear(); // clear the local storage
+      const oldButtons = document.querySelectorAll('.history-btns'); // select all history buttons
+      oldButtons.forEach(button => button.remove()); // remove each history button
+    }
+  });
+  
 
-
-$(`#clear-btn`).on("click", function (event){
-    storedSearches = JSON.parse(localStorage.getItem("pastSearches"));
-    if (storedSearches !== null) {
-        localStorage.clear();
-        //if there is existing search history, we remove each of the history buttons displayed on the page
-        var oldBtns = $(".history-btns");
-        for (i=0; i < oldBtns.length; i++) {
-            oldBtns.remove();
-        }}
-
-});
 
 var getYouTube = function (searchTerm) {
     let searchYouTube = youtubeAPI + APIKEY +'&part=snippet&videoCategoryId=27&type=video&q=' + searchTerm;
